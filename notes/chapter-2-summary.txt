@@ -1,0 +1,34 @@
+The task concept, and its technical implementation, is
+the fundamental unit of our orchestration system. All
+the other components—worker, manager, and scheduler
+—exist for the purpose of starting, stopping, and
+inspecting tasks.
+
+The Docker API provides the ability to manipulate
+containers programmatically. The three most important
+methods are ContainerCreate, ContainerStart,
+and ContainerStop. These methods allow a developer
+to perform the same operations from their code that
+they can do from the command line (i.e., docker run,
+docker start, and docker stop).
+
+A container has a configuration. The configuration can
+be broken down into the following categories:
+identification (i.e., how to identify containers), resource
+allocation, networking, and error handling.
+
+A task is the smallest unit of work performed by our
+orchestration system and can be thought of as similar to
+running a program on your laptop or desktop.
+
+We use Docker in this book because it abstracts away
+many of the concerns of the underlying operating
+system. We could implement our orchestration system to
+run tasks as regular operating system processes. Doing
+so, however, means our system would need to be
+intimately familiar with the details of how processes run
+across OSs (e.g., Linux, Mac, Windows).
+
+An orchestration system consists of multiple machines,
+called a cluster.
+
