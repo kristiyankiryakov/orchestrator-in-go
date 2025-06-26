@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/golang-collections/collections/queue"
 	"github.com/google/uuid"
-	"github.com/kristiyankiryakov/orchestrator-in-go/task"
+	"orchestrator-in-go/task"
 )
 
 type Worker struct {
