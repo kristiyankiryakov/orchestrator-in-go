@@ -1,0 +1,12 @@
+The worker exposes metrics about the state of the machine where it is
+running. The metrics—about CPU, memory, and disk usage—will be used by
+the manager to make scheduling decisions.
+
+To make gathering metrics easier, we use a third-party library called
+goprocinfo. This library handles most of the low-level work necessary to
+get metrics from the /proc filesystem.
+
+The metrics are made available on the same API that we built in chapter 5.
+Thus, the manager will have a uniform way to interact with workers:
+making HTTP calls to /tasks to perform task operations and making calls
+to /stats to gather metrics about a worker’s current state.

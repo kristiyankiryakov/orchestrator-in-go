@@ -1,0 +1,21 @@
+The API wraps the worker’s functionality and exposes it as an HTTP
+server, thus making it accessible over a network. This strategy of
+exposing the worker’s functionality as a web API will allow the
+manager to start and stop tasks, as well as query the state of tasks
+across one or more workers.
+
+The API is made up of handlers, routes, and a router. Handlers are
+functions that accept a request and know how to process it and return
+a response. Routes are patterns that can be used to match the URL of
+incoming requests (e.g., /tasks). Finally, a router is the glue that
+makes it all work by using the routes to route requests to the
+handlers.
+
+The API uses the standard HTTP methods like GET, POST, and
+DELETE to define the operations that will occur for a given route. For
+example, calling GET /tasks will return a list of tasks from the
+worker.
+
+While the API wraps the worker’s functionality, it does not interact
+with that functionality itself. Instead, it simply performs some
+administrative work and then places the task on the worker’s queue.

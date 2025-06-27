@@ -14,11 +14,21 @@ type Worker struct {
 	Name      string
 	Queue     queue.Queue
 	Db        map[uuid.UUID]*task.Task
+	Stats     *Stats
 	TaskCount int
 }
 
 func (w *Worker) CollectStats() {
-	fmt.Println("I will collect stats")
+	for {
+		log.Println("Collecting stats")
+		w.Stats = GetStats()
+		w.Stats.TaskCount = w.TaskCount
+		time.Sleep(15 * time.Second)
+	}
+}
+
+func (w *Worker) AddTask(t task.Task) {
+	w.Queue.Enqueue(t)
 }
 
 func (w *Worker) RunTask() task.DockerResult {
@@ -97,6 +107,11 @@ func (w *Worker) StopTask(t task.Task) task.DockerResult {
 	return result
 }
 
-func (w *Worker) AddTask(t task.Task) {
-	w.Queue.Enqueue(t)
+func (w *Worker) GetTasks() []*task.Task {
+	var tasks []*task.Task
+
+	for _, t := range w.Db {
+		tasks = append(tasks, t)
+	}
+	return tasks
 }
