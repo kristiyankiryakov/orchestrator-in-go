@@ -1,0 +1,23 @@
+Tasks are executed as containers, meaning there is a
+one-to-one relationship between a task and a container
+
+The worker performs two basic actions on tasks, either
+starting or stopping them. These actions result in tasks
+transitioning from one state to the next valid state.
+
+The worker shows how the Go language supports object
+composition. The worker itself is a composition of other
+objects; in particular, the worker’s Queue field is a
+struct defined in the github.com/golang-
+collections/collections/ queue package
+
+The worker, as we’ve designed and implemented it, is
+simple. We’ve used clear and concise processes that are
+easy to implement in code.
+
+The worker does not interact directly with the Docker
+SDK. Instead, it uses our Docker struct, which is a
+wrapper around the SDK. By encapsulating the
+interaction with the SDK in the Docker struct, we can
+keep the StartTask and StopTask methods small
+and readable.

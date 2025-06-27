@@ -26,16 +26,13 @@ func (w *Worker) RunTask() task.DockerResult {
 
 	if t == nil {
 		log.Println("No tasks in the queue")
-		return task.DockerResult{
-			Error: nil,
-		}
+		return task.DockerResult{Error: nil}
 	}
 
 	taskQueued := t.(task.Task)
 
 	taskPersisted := w.Db[taskQueued.ID]
-
-	if taskPersisted != nil {
+	if taskPersisted == nil {
 		taskPersisted = &taskQueued
 		w.Db[taskQueued.ID] = &taskQueued
 	}
