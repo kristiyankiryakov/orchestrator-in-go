@@ -1,0 +1,32 @@
+requirements for our manager:
+1. Accepts requests from users to start and stop tasks
+2. Schedules tasks onto worker machines
+3. Keeps track of tasks, their states, and the machine on
+which they run
+
+The manager records user requests in the form of
+task.TaskEvent items and stores them in its
+EventDB. This task event, which includes the
+task.Task itself, serves as the user’s desired state for
+the task.
+
+The manager records the “state of the world” (i.e., the
+actual state of a task from the perspective of a worker)
+in its TaskDB. For this initial implementation of the
+manager, we do not attempt to retry failed tasks and
+instead simply record the state. We will revisit this
+problem later in chapter 9.
+
+The manager serves a purely administrative function. It
+accepts requests from users, records those requests in
+its internal databases, selects a worker to run the task,
+and passes the task along to the worker. It periodically
+updates its internal state by querying the worker’s API.
+It is not directly involved in any of the operations to
+actually run a task.
+
+We’ve used a simple, extremely naive algorithm to
+assign tasks to workers. This decision allowed us to code
+a working implementation of the manager in a relatively
+small number of lines of code. We will revisit this
+decision in chapter 10.

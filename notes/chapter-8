@@ -1,0 +1,9 @@
+We wrapped the manager component in an API that allows users to
+communicate with the manager.
+
+We constructed the manager’s API using the same types of
+components we used for the worker’s API: handlers, routes, and a
+router.
+
+The router listens for requests to the routes, and dispatches those
+requests to the appropriate handlers.

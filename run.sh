@@ -1,9 +1,13 @@
 #!/bin/bash
 
-# Set environment variables
+
 export DOCKER_API_VERSION=1.45
-export CUBE_HOST=${CUBE_HOST:-localhost}
-export CUBE_PORT=${CUBE_PORT:-5555}
+export CUBE_WORKER_HOST=0.0.0.0
+export CUBE_WORKER_PORT=5555
+export CUBE_MANAGER_HOST=0.0.0.0
+export CUBE_MANAGER_PORT=5556
+
+
 
 # Function to run in Docker
 run_docker() {
@@ -18,16 +22,19 @@ run_docker() {
 
     # Run the container
     docker run -d \
-        --name orchestrator-worker \
-        -p $CUBE_PORT:5555 \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        -e DOCKER_API_VERSION=$DOCKER_API_VERSION \
-        -e CUBE_HOST=0.0.0.0 \
-        -e CUBE_PORT=5555 \
-        orchestrator-worker
+         --name orchestrator-worker \
+         -v /var/run/docker.sock:/var/run/docker.sock \
+         -e DOCKER_API_VERSION=$DOCKER_API_VERSION \
+         -e CUBE_WORKER_HOST=$CUBE_WORKER_HOST \
+         -e CUBE_WORKER_PORT=$CUBE_WORKER_PORT \
+         -e CUBE_MANAGER_HOST=$CUBE_MANAGER_HOST \
+         -e CUBE_MANAGER_PORT=$CUBE_MANAGER_PORT \
+         -p 5555:5555 \
+         -p 5556:5556 \
+         orchestrator-worker
 
-    echo "Container started on port $CUBE_PORT"
-    echo "View logs with: docker logs -f orchestrator-worker"
+   echo "Container started on ports $CUBE_WORKER_PORT and $CUBE_MANAGER_PORT"
+   echo "View logs with: docker logs -f orchestrator-worker"
 }
 
 # Default to docker, but allow local for development
