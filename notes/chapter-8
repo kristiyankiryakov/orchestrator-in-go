@@ -7,3 +7,24 @@ router.
 
 The router listens for requests to the routes, and dispatches those
 requests to the appropriate handlers.
+
+Like the worker’s API, the manager wraps its core functionality and
+exposes it as an HTTP server. Unlike the worker’s API, whose primary
+user is the manager, the primary users of the manager’s API are end
+users—in other words, developers. Thus, the manager’s API is what
+users interact with to run their tasks on the orchestration system.
+
+The manager and worker APIs provide an abstraction over our
+infrastructure, either physical or virtual, that removes the need for
+developers to concern themselves with such low-level details. Instead
+of thinking about how their application runs on a machine, they only
+have to be concerned about how their application runs in a container.
+If it runs as expected in a container on their machine, it can run on
+any machine that’s also running the same container framework (i.e.,
+Docker).
+
+Like the worker API, the manager’s API is a simple REST-based API. It
+defines routes that enable users to create, query, and stop tasks.
+Also, when sent data, it expects that data to be encoded as JSON, and
+it likewise encodes any data it sends as JSON.
+
