@@ -23,11 +23,14 @@ type Task struct {
 	Cpu           float64
 	Memory        int64
 	Disk          int64
+	HostPorts     nat.PortMap
 	ExposedPorts  nat.PortSet
 	PortBindings  map[string]string
 	RestartPolicy string
 	StartTime     time.Time
 	FinishTime    time.Time
+	HealthCheck   string
+	RestartCount  int
 }
 
 type TaskEvent struct {
@@ -90,11 +93,31 @@ func NewDocker(c *Config) *Docker {
 	}
 }
 
+func (d *Docker) Inspect(containerID string) DockerInspectResponse {
+	dc, _ := client.NewClientWithOpts(client.FromEnv)
+	ctx := context.Background()
+
+	resp, err := dc.ContainerInspect(ctx, containerID)
+	if err != nil {
+		log.Printf("Error inspecting container: %s\n", err)
+		return DockerInspectResponse{Error: err}
+	}
+
+	return DockerInspectResponse{
+		Container: &resp,
+	}
+}
+
 type DockerResult struct {
 	Error       error
 	Action      string
 	ContainerId string
 	Result      string
+}
+
+type DockerInspectResponse struct {
+	Error     error
+	Container *container.InspectResponse
 }
 
 func (d *Docker) Run() DockerResult {

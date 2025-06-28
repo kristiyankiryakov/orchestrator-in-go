@@ -28,7 +28,10 @@ func main() {
 
 	go w.RunTasks()
 	go w.CollectStats()
+	go w.UpdateTasks()
 	go wapi.Start()
+
+	fmt.Println("Starting Cube manager")
 
 	workers := []string{fmt.Sprintf("%s:%d", whost, wport)}
 	m := manager.New(workers)
@@ -36,5 +39,8 @@ func main() {
 
 	go m.ProcessTasks()
 	go m.UpdateTasks()
+	go m.DoHealthChecks()
+
 	mapi.Start()
+
 }
