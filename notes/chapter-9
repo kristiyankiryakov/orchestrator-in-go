@@ -10,4 +10,4 @@ recovering from task failures up to a certain point. Past
 a certain point, however, the best it can do is provide
 useful debugging information that helps administrators
 and application owners troubleshoot the problem
-further
+furthe
