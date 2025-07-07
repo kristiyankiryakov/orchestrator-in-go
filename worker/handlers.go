@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"log"
 	"net/http"
+	"orchestrator-in-go/stats"
 	"orchestrator-in-go/task"
 )
 
@@ -43,29 +44,64 @@ func (a *Api) GetTaskHandler(w http.ResponseWriter, r *http.Request) {
 func (a *Api) StopTaskHandler(w http.ResponseWriter, r *http.Request) {
 	taskID := chi.URLParam(r, "taskID")
 	if taskID == "" {
-		log.Printf("No taskID passed in the request\n")
+		log.Printf("No taskID passed in request.\n")
 		w.WriteHeader(400)
 	}
 
 	tID, _ := uuid.Parse(taskID)
-	_, ok := a.Worker.Db[tID]
-	if !ok {
-		log.Printf("Task with ID %v not found\n", tID)
+	taskToStop, err := a.Worker.Db.Get(tID.String())
+	if err != nil {
+		log.Printf("No task with ID %v found", tID)
 		w.WriteHeader(404)
 	}
 
-	taskToStop := a.Worker.Db[tID]
-	taskCopy := *taskToStop
+	// we need to make a copy so we are not modifying the task in the datastore
+	taskCopy := *taskToStop.(*task.Task)
 	taskCopy.State = task.Completed
 	a.Worker.AddTask(taskCopy)
 
-	log.Printf("Added task %v top stop container %v\n",
-		taskToStop.ID, taskToStop.ContainerID)
+	log.Printf("Added task %v to stop container %v\n", taskCopy.ID.String(), taskCopy.ContainerID)
 	w.WriteHeader(204)
+}
+
+func (a *Api) GetTasksHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(a.Worker.GetTasks())
 }
 
 func (a *Api) GetStatsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	if a.Worker.Stats != nil {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(*a.Worker.Stats)
+		return
+	}
+
 	w.WriteHeader(200)
-	json.NewEncoder(w).Encode(a.Worker.Stats)
+	stats := stats.GetStats()
+	json.NewEncoder(w).Encode(stats)
+}
+
+func (a *Api) InspectTaskHandler(w http.ResponseWriter, r *http.Request) {
+	taskID := chi.URLParam(r, "taskID")
+	if taskID == "" {
+		log.Printf("No taskID passed in request.\n")
+		w.WriteHeader(400)
+	}
+
+	tID, _ := uuid.Parse(taskID)
+	t, err := a.Worker.Db.Get(tID.String())
+	if err != nil {
+		log.Printf("No task with ID %v found", tID)
+		w.WriteHeader(404)
+		return
+	}
+
+	resp := a.Worker.InspectTask(t.(task.Task))
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(resp.Container)
+
 }
