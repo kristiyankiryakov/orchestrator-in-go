@@ -9,3 +9,37 @@ get the best service
 - Getting customers in and out as quickly as possible
 because we want high volume
 
+Chapter Summary:
+
+The scheduling problem exists all around us, from home
+chores to seating customers in a restaurant.
+
+Scheduling does not have a one-size-fits-all solution.
+There are multiple solutions, and each one makes
+tradeoffs based on what we are trying to achieve. It can
+be as simple as using a round-robin algorithm to select
+each node in turn. Or it can be as complex as devising a
+method to calculate a score for each node based on
+some set of data—for example, the current CPU load and
+memory usage of each node.
+
+For the purposes of scheduling tasks in an orchestration
+system, we can generalize the process to three
+functions: selecting candidate nodes, which involves
+reducing the number of possible nodes based on some
+selection criteria (e.g., does the node have enough disk
+space to pull the task’s container image?); scoring the
+set of candidate nodes; and finally, picking the best
+candidate node.
+
+We can use these three functions to create a general
+framework to allow us to implement multiple schedulers.
+In Go, the interface is what allows us to create this
+framework.
+
+In this chapter, we started three workers, in contrast to
+a single one in past chapters. Using three workers
+allowed us to see a more realistic example of how the
+scheduling process works. However, it’s not the same as
+a more real-world scenario of using multiple physical or
+virtual machines.
