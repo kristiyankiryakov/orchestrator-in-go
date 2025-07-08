@@ -1,0 +1,41 @@
+Storing the orchestrator’s tasks and events in persistent
+datastores allows the system to keep track of task and
+event state, to make informed decisions about
+scheduling, and to help recover from failures.
+
+The store.Store interface lets us swap out datastore
+implementations based on our needs. For example,
+while doing development work, we can use an in-
+memory store, while we use a persistent store for
+production.
+
+While we adapted our old stores that were based on Go’s
+built-in map type to the new store.Store interface,
+these in-memory implementations suffer the same
+problem—that is, the manager and worker will still lose
+their tasks when they restart.
+
+With the store.Store interface and a concrete
+implementation, we made changes to the manager and
+worker to remove their operating directly on the
+datastore. For example, instead of operating on a map of
+map[uuid.UUID]*task .Task, we changed them to
+operate on the store.Store interface. In doing this,
+we decoupled the manager and worker from the
+underlying datastore implementation. They no longer
+needed to know the internal workings of the specific
+datastore; they only needed to know how to call the
+methods of the interface while all the technical details
+were handled by an implementation.
+
+The BoltDB library provides an embedded key-value
+datastore on top of which we built our TaskStore and
+EventStore stores. These datastores persist their data
+to files on disk, thus allowing the manager and worker
+to gracefully restart without losing their tasks.
+
+Once we created the store.Store interface and two
+implementations (one in-memory, one persistent), we
+could switch between the implementations by simply
+passing a string of either memory or persistent to
+the New helper functions.
