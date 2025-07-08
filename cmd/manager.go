@@ -4,7 +4,8 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"log"
+	"orchestrator-in-go/manager"
 
 	"github.com/spf13/cobra"
 )
@@ -31,6 +32,23 @@ The manager controls the orchestration system and is responsible for:
 - Rescheduling tasks in the event of a node failure
 - Periodically polling workers to get task updates`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("manager called")
+		host, _ := cmd.Flags().GetString("host")
+		port, _ := cmd.Flags().GetInt("port")
+		workers, _ := cmd.Flags().GetStringSlice("workers")
+		scheduler, _ := cmd.Flags().GetString("scheduler")
+		dbType, _ := cmd.Flags().GetString("dbType")
+
+		log.Println("Starting manager.")
+
+		m := manager.New(workers, scheduler, dbType)
+		api := manager.Api{Address: host, Port: port, Manager: m}
+		go m.ProcessTasks()
+		go m.UpdateTasks()
+		go m.DoHealthChecks()
+		go m.UpdateNodeStats()
+
+		log.Printf("Starting manager API on http://%s:%d", host, port)
+
+		api.Start()
 	},
 }
