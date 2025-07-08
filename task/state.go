@@ -4,13 +4,9 @@ import "log"
 
 type State int
 
-const (
-	Pending State = iota
-	Scheduled
-	Running
-	Completed
-	Failed
-)
+func (s State) String() []string {
+	return []string{"Pending", "Scheduled", "Running", "Completed", "Failed"}
+}
 
 var stateTransitionMap = map[State][]State{
 	Pending:   []State{Scheduled},
@@ -19,6 +15,14 @@ var stateTransitionMap = map[State][]State{
 	Completed: []State{},
 	Failed:    []State{},
 }
+
+const (
+	Pending State = iota
+	Scheduled
+	Running
+	Completed
+	Failed
+)
 
 func Contains(states []State, state State) bool {
 	for _, s := range states {
